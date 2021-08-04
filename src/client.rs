@@ -34,7 +34,7 @@ impl<'a> SlackClient<'a> {
         Ok(self
             .http_client
             .post(url)
-            .bearer_auth(self.api_key)
+            // .bearer_auth(self.api_key)
             .send()
             .await?
             .text()
