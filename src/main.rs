@@ -18,7 +18,9 @@ async fn main() {
     // let mut parameters = HashMap::new();
     // parameters.insert("channel", "");
 
-    let response = client.members_of_channel("C02A4KVB43F").await.unwrap();
+    let users = client.members_of_channel("C02A4KVB43F").await.unwrap();
+    dbg!(&users);
 
-    dbg!(response);
+    let channel_id = client.start_direct_message(users).await.unwrap();
+    dbg!(&channel_id);
 }

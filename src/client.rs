@@ -62,4 +62,20 @@ impl<'a> SlackClient<'a> {
             Err(Error::FailedRequest(format!("{}", response)))
         }
     }
+
+    pub async fn start_direct_message(&self, users: Vec<String>) -> Result<String> {
+        let users = users.join(",");
+        let mut parameters = HashMap::new();
+        parameters.insert("users", &*users);
+        parameters.insert("return_im", "false");
+
+        let response = self.send(Method::OpenDirectMessage, parameters).await?;
+
+        if let Value::Object(map) = &response["channel"] {
+            let channel_id = map["id"].to_string();
+            Ok(channel_id)
+        } else {
+            Err(Error::FailedRequest(format!("{}", response)))
+        }
+    }
 }
