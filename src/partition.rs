@@ -1,6 +1,6 @@
 use rand::{prelude::StdRng, seq::SliceRandom, SeedableRng};
 
-pub fn random_partition<T: Copy>(xs: &mut [T], size: usize) -> Vec<Vec<T>> {
+pub fn random_partition<T: Clone>(xs: &mut [T], size: usize) -> Vec<Vec<T>> {
     if xs.len() < 1 || size < 1 {
         return vec![xs.into()];
     }

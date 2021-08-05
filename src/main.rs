@@ -8,6 +8,11 @@ use std::env;
 use client::SlackClient;
 use error::Result;
 
+use crate::partition::random_partition;
+
+// The id of this bot
+const BOT_ID: &str = "U02A31NTD6F";
+const MESSAGE: &str = "👋 Bom dia! Tá na hora do encontro do #testando-o-bagel! Combinem um horário para todos tomarem um café e colocarem o papo em dia. 😊";
 const CHANNEL_IDS: &str = include_str!("../channel-ids");
 
 #[tokio::main]
@@ -24,22 +29,22 @@ async fn set_up_meetings(channel_id: &str) -> Result<()> {
     let oauth_token = env::var("SLACK_OAUTH_TOKEN").expect("SLACK_OAUTH_TOKEN not found");
     let client = SlackClient::from_key(&oauth_token);
 
-    let users = client.members_of_channel(channel_id).await?;
+    let mut users = client.members_of_channel(channel_id).await?;
+
     dbg!(&users);
+    users.retain(|user_id| user_id != BOT_ID);
 
-    let channel_id = client
-        .start_direct_message(users)
-        .await?;
+    let user_partitions = random_partition(&mut users, 2);
+    dbg!(&user_partitions);
 
-    let channel_id_stripped = channel_id
-        .strip_prefix("\"")
-        .unwrap()
-        .strip_suffix("\"")
-        .unwrap();
-
-    dbg!(&channel_id);
-
-    let success = client.post_message(channel_id_stripped, "Olá, abigos!").await?;
+    for partition in user_partitions {
+        eprintln!("Criando DM com {:?}", partition);
+        let channel_id = client.start_direct_message(partition).await?;
+        dbg!(&channel_id);
+        if client.post_message(&channel_id, MESSAGE).await.is_err() {
+            // mande erro
+        }
+    }
 
     Ok(())
 }

@@ -73,7 +73,12 @@ impl<'a> SlackClient<'a> {
 
         if let Value::Object(map) = &response["channel"] {
             let channel_id = map["id"].to_string();
-            Ok(channel_id)
+            Ok(channel_id
+                .strip_prefix("\"")
+                .unwrap()
+                .strip_suffix("\"")
+                .unwrap()
+                .into())
         } else {
             Err(Error::FailedRequest(format!("{}", response)))
         }
