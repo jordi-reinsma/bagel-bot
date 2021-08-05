@@ -12,7 +12,7 @@ use crate::partition::random_partition;
 
 // The id of this bot
 const BOT_ID: &str = "U02A31NTD6F";
-const MESSAGE: &str = "👋 Bom dia! Tá na hora do encontro do #testando-o-bagel! Combinem um horário para todos tomarem um café e colocarem o papo em dia. 😊";
+const MESSAGE: &str = "👋 Bom dia! Tá na hora do encontro do <#channel>! Combinem um horário para todos tomarem um café e colocarem o papo em dia. 😊";
 const CHANNEL_IDS: &str = include_str!("../channel-ids");
 
 #[tokio::main]
@@ -39,9 +39,12 @@ async fn set_up_meetings(channel_id: &str) -> Result<()> {
 
     for partition in user_partitions {
         eprintln!("Criando DM com {:?}", partition);
+
+        let message = MESSAGE.replace("channel", channel_id);
+
         let channel_id = client.start_direct_message(partition).await?;
         dbg!(&channel_id);
-        if client.post_message(&channel_id, MESSAGE).await.is_err() {
+        if client.post_message(&channel_id, &message).await.is_err() {
             // mande erro
         }
     }
