@@ -84,7 +84,7 @@ impl<'a> SlackClient<'a> {
         parameters.insert("channel", channel_id);
         parameters.insert("text", text);
 
-        let response = self.send(Method::OpenDirectMessage, parameters).await?;
+        let response = self.send(Method::PostMessage, parameters).await?;
 
         if matches!(response["ok"], Value::Bool(true)) {
             Ok(())
