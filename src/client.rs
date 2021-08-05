@@ -1,7 +1,9 @@
-use std::borrow::Borrow;
+use std::{borrow::Borrow, collections::HashMap};
 
 use reqwest::Url;
+use serde_json::Value;
 
+use crate::error::Result;
 use crate::method::Method;
 
 pub struct SlackClient<'a> {
@@ -18,7 +20,7 @@ impl<'a> SlackClient<'a> {
     }
 
     // todo: error treatment
-    pub async fn send<P, K, V>(&self, method: Method, parameters: P) -> reqwest::Result<String>
+    pub async fn send<P, K, V>(&self, method: Method, parameters: P) -> Result<serde_json::Value>
     where
         P: IntoIterator + Send,
         K: AsRef<str>,
@@ -31,13 +33,15 @@ impl<'a> SlackClient<'a> {
         // to the URL
         url.query_pairs_mut().extend_pairs(parameters);
 
-        Ok(self
+        let response = self
             .http_client
             .post(url)
             .bearer_auth(self.api_key)
             .send()
             .await?
             .text()
-            .await?)
+            .await?;
+
+        Ok(serde_json::from_str(&response)?)
     }
 }

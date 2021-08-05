@@ -1,4 +1,5 @@
 mod client;
+mod error;
 mod method;
 
 use std::{collections::HashMap, env};
