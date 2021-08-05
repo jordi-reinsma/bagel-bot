@@ -23,4 +23,7 @@ async fn main() {
 
     let channel_id = client.start_direct_message(users).await.unwrap();
     dbg!(&channel_id);
+
+    let success = client.post_message(&channel_id, "Olá, abigos!").await.unwrap();
+    dbg!(success);
 }

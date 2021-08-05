@@ -78,4 +78,18 @@ impl<'a> SlackClient<'a> {
             Err(Error::FailedRequest(format!("{}", response)))
         }
     }
+
+    pub async fn post_message(&self, channel_id: &str, text: &str) -> Result<()> {
+        let mut parameters = HashMap::new();
+        parameters.insert("channel", channel_id);
+        parameters.insert("text", text);
+
+        let response = self.send(Method::OpenDirectMessage, parameters).await?;
+
+        if matches!(response["ok"], Value::Bool(true)) {
+            Ok(())
+        } else {
+            Err(Error::FailedRequest(response.to_string()))
+        }
+    }
 }
