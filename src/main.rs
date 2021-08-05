@@ -5,8 +5,8 @@ mod partition;
 
 use std::env;
 
-use error::Result;
 use client::SlackClient;
+use error::Result;
 
 const CHANNEL_IDS: &str = include_str!("../channel-ids");
 
@@ -27,10 +27,19 @@ async fn set_up_meetings(channel_id: &str) -> Result<()> {
     let users = client.members_of_channel(channel_id).await?;
     dbg!(&users);
 
-    let channel_id = client.start_direct_message(users).await?;
+    let channel_id = client
+        .start_direct_message(users)
+        .await?;
+
+    let channel_id_stripped = channel_id
+        .strip_prefix("\"")
+        .unwrap()
+        .strip_suffix("\"")
+        .unwrap();
+
     dbg!(&channel_id);
 
-    let success = client.post_message(&channel_id, "Olá, abigos!").await?;
-    
+    let success = client.post_message(channel_id_stripped, "Olá, abigos!").await?;
+
     Ok(())
 }
