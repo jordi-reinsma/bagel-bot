@@ -2,7 +2,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    FailedRequest(reqwest::Error),
+    FailedRequest(String),
+    Reqwest(reqwest::Error),
     Deserialization(serde_json::Error),
 }
 
@@ -14,6 +15,6 @@ impl From<serde_json::Error> for Error {
 
 impl From<reqwest::Error> for Error {
     fn from(err: reqwest::Error) -> Self {
-        Self::FailedRequest(err)
+        Self::Reqwest(err)
     }
 }

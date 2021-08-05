@@ -15,13 +15,10 @@ async fn main() {
     let oauth_token = env::var("SLACK_OAUTH_TOKEN").expect("SLACK_OAUTH_TOKEN not found");
     let client = SlackClient::from_key(&oauth_token);
 
-    let mut parameters = HashMap::new();
-    parameters.insert("channel", "C02A4KVB43F");
+    // let mut parameters = HashMap::new();
+    // parameters.insert("channel", "");
 
-    let response = client
-        .send(Method::ListMembersOfChannel, parameters)
-        .await
-        .expect("request failed!");
+    let response = client.members_of_channel("C02A4KVB43F").await.unwrap();
 
     dbg!(response);
 }

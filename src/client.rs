@@ -3,7 +3,7 @@ use std::{borrow::Borrow, collections::HashMap};
 use reqwest::Url;
 use serde_json::Value;
 
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::method::Method;
 
 pub struct SlackClient<'a> {
@@ -43,5 +43,23 @@ impl<'a> SlackClient<'a> {
             .await?;
 
         Ok(serde_json::from_str(&response)?)
+    }
+
+    pub async fn members_of_channel(&self, channel: &str) -> Result<Vec<String>> {
+        let mut parameters = HashMap::new();
+        parameters.insert("channel", channel);
+
+        let response = self.send(Method::ListMembersOfChannel, parameters).await?;
+
+        if let Value::Array(array) = &response["members"] {
+            Ok(array
+                .iter()
+                .map(|val| val.as_str())
+                .filter_map(|v| v)
+                .map(ToString::to_string)
+                .collect())
+        } else {
+            Err(Error::FailedRequest(format!("{}", response)))
+        }
     }
 }
