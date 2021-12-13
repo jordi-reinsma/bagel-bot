@@ -20,10 +20,10 @@ func main() {
 	fmt.Println("Starting bagel...")
 	rand.Seed(time.Now().UnixNano())
 
-	DB := db.MustConnect(RESET)
-	defer DB.Close()
+	dB := db.MustConnect(RESET)
+	defer dB.Close()
 
-	skip, err := core.ShouldSkipExecution(DB)
+	skip, err := core.ShouldSkipExecution(dB)
 	if err != nil {
 		panic(err)
 	}
@@ -44,14 +44,14 @@ func main() {
 			panic(err)
 		}
 
-		users, err := DB.AddAndGetUsers(userUUIDs)
+		users, err := dB.AddAndGetUsers(userUUIDs)
 		if err != nil {
 			panic(err)
 		}
 
 		fmt.Println("Users:", len(users))
 
-		matches, err := core.GenerateMatches(DB, users)
+		matches, err := core.GenerateMatches(dB, users)
 		if err != nil {
 			panic(err)
 		}
@@ -63,7 +63,7 @@ func main() {
 				fmt.Println(match, err)
 				continue
 			}
-			err = DB.UpdateMatch(match)
+			err = dB.UpdateMatch(match)
 			if err != nil {
 				fmt.Println(match, err)
 				continue
@@ -78,7 +78,7 @@ func main() {
 		fmt.Println("Matches:", len(matches))
 	}
 
-	err = DB.SaveExecution()
+	err = dB.SaveExecution()
 	if err != nil {
 		panic(err)
 	}

@@ -10,8 +10,8 @@ import (
 
 var runIntervalDays = os.Getenv("RUN_INTERVAL_DAYS")
 
-func ShouldSkipExecution(DB db.DB) (bool, error) {
-	date, err := DB.GetLastExecutionDate()
+func ShouldSkipExecution(dB db.DB) (bool, error) {
+	date, err := dB.GetLastExecutionDate()
 	if err != nil {
 		return true, err
 	}

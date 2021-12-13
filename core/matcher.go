@@ -10,8 +10,8 @@ import (
 	"github.com/jordi-reinsma/bagel/model"
 )
 
-func GenerateMatches(DB db.DB, users []model.User) ([]model.Match, error) {
-	pairs, err := preparePairs(DB, users)
+func GenerateMatches(dB db.DB, users []model.User) ([]model.Match, error) {
+	pairs, err := preparePairs(dB, users)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func GenerateMatches(DB db.DB, users []model.User) ([]model.Match, error) {
 	return greedyMatcher(users, pairs)
 }
 
-func preparePairs(DB db.DB, users []model.User) ([]model.Match, error) {
+func preparePairs(dB db.DB, users []model.User) ([]model.Match, error) {
 	var pairs []model.Match
 	for i := 0; i < len(users)-1; i++ {
 		for j := i + 1; j < len(users); j++ {
@@ -29,7 +29,7 @@ func preparePairs(DB db.DB, users []model.User) ([]model.Match, error) {
 			pairs = append(pairs, model.Match{A: users[i], B: users[j]})
 		}
 	}
-	return DB.AddAndGetPairs(pairs)
+	return dB.AddAndGetPairs(pairs)
 }
 
 // greedyMatcher implements the greedy algorithm for the minimum weight perfect matching problem

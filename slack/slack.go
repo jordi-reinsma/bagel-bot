@@ -16,8 +16,8 @@ const (
 	urlConversationMembers = "https://slack.com/api/conversations.members"
 	urlConversationOpen    = "https://slack.com/api/conversations.open"
 	urlPostMessage         = "https://slack.com/api/chat.postMessage"
-	conversationTemplate   = "👋 Bom dia! Tá na hora do encontro do <#%s>! 🥯 Combinem um horário para vocês tomarem um café e colocarem o papo em dia. 😊"
-	channelTemplate        = "🥯 Bom dia! O bagel começou! Receberam seus convites para um café? 🥯"
+	conversationMessage    = "👋 Bom dia! Tá na hora do encontro do canal <#%s>! 🥯 Combinem um horário para vocês tomarem um café e colocarem o papo em dia. 😊"
+	channelMessage         = "🥯 Bom dia! O bagel começou! Receberam seus convites para um café? 🥯"
 )
 
 var (
@@ -81,7 +81,7 @@ func (c Client) SendMessage(match model.Match, channelID string) error {
 
 	body = url.Values{}
 	body.Set("channel", conversationID)
-	body.Set("text", fmt.Sprintf(conversationTemplate, channelID))
+	body.Set("text", fmt.Sprintf(conversationMessage, channelID))
 
 	_, err = callAPI(urlPostMessage, body)
 	return err
@@ -90,7 +90,7 @@ func (c Client) SendMessage(match model.Match, channelID string) error {
 func (c Client) SendChannelMessage(channelID string) error {
 	body := url.Values{}
 	body.Set("channel", channelID)
-	body.Set("text", channelTemplate)
+	body.Set("text", channelMessage)
 
 	_, err := callAPI(urlPostMessage, body)
 	return err
