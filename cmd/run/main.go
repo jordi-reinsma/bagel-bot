@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/jordi-reinsma/bagel/core"
@@ -10,12 +11,16 @@ import (
 	"github.com/jordi-reinsma/bagel/slack"
 )
 
+var (
+	RESET = os.Getenv("RESET") == "1"
+	MOCK  = os.Getenv("MOCK") == "1"
+)
+
 func main() {
 	fmt.Println("Starting bagel...")
 	rand.Seed(time.Now().UnixNano())
 
-	// change to true to reset the database
-	DB := db.MustConnect(false)
+	DB := db.MustConnect(RESET)
 	defer DB.Close()
 
 	skip, err := core.ShouldSkipExecution(DB)
@@ -27,8 +32,7 @@ func main() {
 		return
 	}
 
-	// change to true to use mock data
-	slack := slack.New(false)
+	slack := slack.New(MOCK)
 
 	channelIDs := slack.GetChannelUUIDs()
 
