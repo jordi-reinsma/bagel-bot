@@ -26,6 +26,9 @@ func preparePairs(dB db.DB, users []model.User) ([]model.Match, error) {
 			if users[i].ID == users[j].ID {
 				continue
 			}
+			if users[i].ID > users[j].ID {
+				users[i], users[j] = users[j], users[i]
+			}
 			pairs = append(pairs, model.Match{A: users[i], B: users[j]})
 		}
 	}
