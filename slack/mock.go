@@ -22,8 +22,8 @@ func (m Mock) GetUserUUIDs(channelID string) ([]model.User, error) {
 		{UUID: "999"},
 		{UUID: "000"},
 		{UUID: "XXX"},
-		{UUID: "LLL"},
-		{UUID: "PPP"},
+		{UUID: "YYY"},
+		{UUID: "ZZZ"},
 	}
 
 	return users, nil

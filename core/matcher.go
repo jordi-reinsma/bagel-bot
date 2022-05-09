@@ -11,11 +11,17 @@ import (
 )
 
 func GenerateMatches(dB db.DB, users []model.User) ([]model.Match, error) {
+	// sort the users by id
+	byID := func(i, j int) bool {
+		return users[i].ID < users[j].ID
+	}
+	sort.Slice(users, byID)
+	// make the pairs
 	pairs, err := preparePairs(dB, users)
 	if err != nil {
 		return nil, err
 	}
-
+	// pick the best pairs
 	return greedyMatcher(users, pairs)
 }
 
@@ -25,9 +31,6 @@ func preparePairs(dB db.DB, users []model.User) ([]model.Match, error) {
 		for j := i + 1; j < len(users); j++ {
 			if users[i].ID == users[j].ID {
 				continue
-			}
-			if users[i].ID > users[j].ID {
-				users[i], users[j] = users[j], users[i]
 			}
 			pairs = append(pairs, model.Match{A: users[i], B: users[j]})
 		}
@@ -53,7 +56,7 @@ func greedyMatcher(users []model.User, pairs []model.Match) ([]model.Match, erro
 	numMatches := len(users)/2 + len(users)%2
 
 	matches := make([]model.Match, 0, numMatches)
-	matched := make(map[int]bool)
+	matched := make(map[int]bool, len(users))
 	for _, user := range users {
 		matched[user.ID] = false
 	}
